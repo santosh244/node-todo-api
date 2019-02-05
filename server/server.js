@@ -22,6 +22,8 @@ app.post('/todos', (req, res) => {
 });
 
 
+
+
 app.post('/user', (req, res) => {
  var user = new User({
    name: req.body.name
@@ -34,7 +36,7 @@ app.post('/user', (req, res) => {
  });
 });
 
-
+module.exports ={app}
 
 
 
