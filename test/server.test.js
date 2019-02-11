@@ -5,8 +5,16 @@ const {app} = require('./../server/server');
 const {Todo} = require('./../server/models/todo');
 
 
+const records = [{
+  text: 'Santosh here'
+},{
+  text: 'The pawn to save queen'
+}];
+
 beforeEach((done) => {
-  Todo.remove({}).then(() => done());
+  Todo.remove({}).then(() => {
+    Todo.insertMany(records);
+  }).then(() => done());
 });
 
 describe('Testing post /todos',() => {
@@ -25,7 +33,7 @@ describe('Testing post /todos',() => {
         if(err) {
           return done(err);
         }
-        Todo.find().then((todos) => {
+        Todo.find({text: msg}).then((todos) => {
           expect(todos.length).toBe(1);
           expect(todos[0].text).toBe(msg);
           done();
@@ -34,7 +42,6 @@ describe('Testing post /todos',() => {
   });
 
  it('should not create todo with invalid data', (done) => {
-
    request(app)
     .post('/todos')
     .send({})
@@ -45,9 +52,24 @@ describe('Testing post /todos',() => {
       }
 
       Todo.find().then((todos) => {
-        expect(todos.length).toBe(0);
+        expect(todos.length).toBe(2);
         done()
       }).catch((e) => done(e));
     });
   });
+
+ });
+
+
+
+
+ describe('Testing get /todos', () => {
+   it('should get the todos collections', (done) => {
+     request(app)
+     .get('/todos')
+     .expect(200)
+     .expect((res) => {
+       expect(res.body.todos.length).toBe(2)
+     }).end(done)
+   })
  });
